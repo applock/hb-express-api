@@ -1,4 +1,4 @@
-const Yup = require('yup');
+const Yup = require("yup");
 
 module.exports = {
     emailLoginSchema: () => {

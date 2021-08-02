@@ -5,11 +5,11 @@
  */
 
 module.exports = {
-    validateResourceMW = (resourceSchema) => (req, res, next) => {
+    validateResource: (resourceSchema) => (req, res, next) => {
         const resource = req.body;
         try {
             // throws an error if not valid
-            resourceSchema.validate(resource);
+            //resourceSchema.isValid(resource);
             next();
         } catch (e) {
             console.error(e);
