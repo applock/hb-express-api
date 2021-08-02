@@ -1,21 +1,9 @@
 const pool = require("../../config/db");
 
 module.exports = {
-    create: (data, callBack) => {
+    loginUserByUsername: (username, callBack) => {
         pool.query(
-            `insert into users (username, password, email, mobile, enabled) values (?,?,?,?,?)`,
-            [data.username, data.password, data.email, data.mobile, data.enabled],
-            (error, results, fields) => {
-                if (error) {
-                    return callBack(error)
-                }
-                return callBack(null, results)
-            }
-        );
-    },
-    getUserByUsername: (username, callBack) => {
-        pool.query(
-            `select * from users where username = ?`,
+            `select * from users where username = ? and enabled=1`,
             [username],
             (error, results, fields) => {
                 if (error) {
@@ -25,9 +13,9 @@ module.exports = {
             }
         );
     },
-    getUserByEmail: (email, callBack) => {
+    loginUserByEmail: (email, callBack) => {
         pool.query(
-            `select * from users where email = ?`,
+            `select * from users where email = ? and enabled=1`,
             [email],
             (error, results, fields) => {
                 if (error) {
@@ -37,9 +25,9 @@ module.exports = {
             }
         );
     },
-    getUserByMobile: (mobile, callBack) => {
+    loginUserByMobile: (mobile, callBack) => {
         pool.query(
-            `select * from users where mobile = ?`,
+            `select * from users where mobile = ? and enabled=1`,
             [mobile],
             (error, results, fields) => {
                 if (error) {
