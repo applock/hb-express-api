@@ -5,6 +5,9 @@ const app = express();
 // Application level - converts json into javascript - unmarshalling
 app.use(express.json());
 
+// Enables cross-origin resource sharing - Remove at production env
+app.use(cors());
+
 const userRouter = require('./api/users/user.router')
 const loginRouter = require('./api/login/login.router')
 
