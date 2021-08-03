@@ -1,6 +1,7 @@
 const { create, getUserByMobile, getUserByEmail } = require('./user.service')
 const { genSaltSync, hashSync } = require('bcrypt')
 const _ = require('lodash')
+const { sendMail } = require('../mailer/emailer')
 
 module.exports = {
     createUser: (req, res) => {
@@ -14,11 +15,33 @@ module.exports = {
         create(body, (err, results) => {
             if (err) {
                 console.error(err)
-                res.status(500).json({
+
+                let msg = 'DB error';
+                let errCode = 500;
+                if (err.code == 'ER_DUP_ENTRY') {
+                    let field = err.message.split('.');
+                    field = field[field.length - 1];
+                    field = field.substr(0, field.length - 1);
+                    msg = `${field} ${body[field]} already in use`
+                    errCode = 400;
+                }
+                return res.status(errCode).json({
                     success: 0,
-                    message: 'DB error'
+                    message: msg
                 })
             }
+
+            // send email
+            if (process.env.SEND_ONBOARDING_EMAIL) {
+                let mailBody = {
+                    from: process.env.MAILER_USER,
+                    to: body.email,
+                    subject: `${process.env.APP_NAME} | Welcome Onboard`,
+                    html: `<h2>${process.env.APP_NAME} welcomes you!<br><br>Your user id - ${body.username}`
+                }
+                sendMail(mailBody);
+            }
+
             return res.status(201).json({
                 success: 1,
                 message: 'User added',
